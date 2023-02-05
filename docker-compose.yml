@@ -1,0 +1,42 @@
+version: "3.8"
+
+
+services:
+
+  database:
+    image: mysql:5.7.22
+    volumes:
+      - ./database:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: music
+      MYSQL_ROOT_PASSWORD: music
+      MYSQL_PASSWORD: music
+      MYSQL_USER: music
+    command: ["mysqld", "--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+    ports:
+      - target: 3306
+        published: 3306
+        protocol: tcp
+
+  phalcon:
+    build : docker
+    working_dir: /var/www/html/project/
+    volumes:
+      - ./:/var/www/html
+    ports:
+        - "8080:80"
+    expose:
+      - "8080"
+    environment:
+      WEB_DOCUMENT_ROOT: /var/www/html/project/public
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    ports:
+      - 8888:80
+    environment:
+        - PMA_ARBITRARY=1
